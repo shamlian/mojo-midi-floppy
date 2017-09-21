@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2017-09-20T22:29:24</DateModified>
+  <DateModified>2017-09-21T19:07:52</DateModified>
   <ModuleName>mojo_top</ModuleName>
   <SummaryTimeStamp>2014-06-17T11:44:14</SummaryTimeStamp>
-  <SavedFilePath>C:/Users/sshamlian/Dropbox/iR-Share/mojo/Floppy/Mojo-Arduino/iseconfig/mojo_top.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>C:/Users/sshamlian/Dropbox/iR-Share/mojo/Floppy/Mojo-Arduino/syn\</ImplementationReportsDirectory>
+  <SavedFilePath>C:/Users/sshamlian/Dropbox/iR-Share/mojo/mojo-midi-floppy/iseconfig/mojo_top.xreport</SavedFilePath>
+  <ImplementationReportsDirectory>C:/Users/sshamlian/Dropbox/iR-Share/mojo/mojo-midi-floppy/syn\</ImplementationReportsDirectory>
   <DateInitialized>2012-11-08T12:38:20</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>

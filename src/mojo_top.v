@@ -6,7 +6,7 @@ module mojo_top(
     // cclk input from AVR, high when AVR is ready
     input cclk,
     // Outputs to the 8 onboard LEDs
-    output[7:0]led,
+    output[7:0] led,
     // Drive Outputs
     output drive0_dir,
     output drive0_stp,
@@ -38,7 +38,6 @@ module mojo_top(
   wire [7:0] reg_write_value, reg_read_value;
   
   wire floppy0_en;
-  wire [6:0] floppy0_note;
   wire [22:0] floppy0_setp;
   
   // for now, just one drive
@@ -78,23 +77,18 @@ module mojo_top(
       .new_req(reg_new_req),
       .write_value(reg_write_value),
       .read_value(reg_read_value),
-      .led(led),
-		.floppy0({floppy0_en, floppy0_note})
+		.led(led),
+	   .f0_sp(floppy0_setp),
+		.f0_en(floppy0_en)
     );
 
 	floppy floppy0 (
 		.clk(clk),
 		.enable(floppy0_en),
 		.rst(rst),
-		.setpoint(floppy0_setp), // temp; need a lookup table
-		//.setpoint(22'd227272),
+		.setpoint(floppy0_setp),
 		.step(drive0_stp),
 		.dir(drive0_dir),
 		.sel(drive0_sel)
-	);
-	
-	floppy_lookup f0_l (
-		.note(floppy0_note),
-		.setpoint(floppy0_setp)
 	);
 endmodule

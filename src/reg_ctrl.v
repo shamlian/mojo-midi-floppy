@@ -11,48 +11,48 @@ module reg_ctrl (
 
         // Device interface
         output [7:0] led,
-		  output [7:0] floppy0
+		  output [22:0] f0_sp,
+		  output f0_en
     );
 
 reg [7:0] read_value_d, read_value_q;
 
-reg [7:0] led_d, led_q;
-//reg [7:0] floppy0_d, floppy0_q;
+reg [7:0] floppy0_d, floppy0_q;
 
 assign read_value = read_value_q;
-assign led = led_q;
-//assign floppy0 = floppy0_q;
-assign floppy0 = led;
+assign led = floppy0_q;
 
 always @* begin
     read_value_d = read_value_q;
 
-    led_d = led_q;
+    floppy0_d = floppy0_q;
 
     if (new_req) begin
         if (write)
             case (reg_addr)
-                6'h00: led_d = write_value;
-					 //6'h00: floppy0_d = write_value;
+					 6'h00: floppy0_d = write_value;
             endcase
         else //read
             case (reg_addr)
-                6'h00: read_value_d = led_q;
-                //6'h00: read_value_d = floppy0_q;
+                6'h00: read_value_d = floppy0_q;
             endcase
     end
 end
 
 always @(posedge clk) begin
     if (rst) begin
-        led_q <= 8'b0;
-        //floppy0_q <= 8'b0;
+        floppy0_q <= 8'b0;
     end else begin
-        led_q <= led_d;
-        //floppy0_q <= floppy0_d;
+        floppy0_q <= floppy0_d;
     end
     
     read_value_q <= read_value_d;
 end
+
+floppy_lookup floppy_lookup(
+    .note(floppy0_q[6:0]),
+    .setpoint(f0_sp)
+);
+assign f0_en = floppy0_q[7];
 
 endmodule
