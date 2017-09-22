@@ -38,7 +38,7 @@ module mojo_top(
   wire [7:0] reg_write_value, reg_read_value;
   
   wire floppy0_en;
-  wire [22:0] floppy0_setp;
+  wire [21:0] floppy0_setp;
   
   // for now, just one drive
   assign drive1_dir = 1'bz;

@@ -23,16 +23,14 @@ module floppy(
 		input enable,
 		input rst,
 		input [21:0] setpoint,
-		output step,
-		output dir,
+		output reg step,
+		output reg dir,
 		output sel
 	);
 
 	reg [21:0] counter_d, counter_q;
-	reg step;
 
 	reg [6:0] dir_ctr_d, dir_ctr_q;
-	reg dir;
 
 	always @(counter_q) begin
 		counter_d = counter_q + 1'b1;

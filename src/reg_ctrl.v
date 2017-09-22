@@ -11,7 +11,7 @@ module reg_ctrl (
 
         // Device interface
         output [7:0] led,
-		  output [22:0] f0_sp,
+		  output [21:0] f0_sp,
 		  output f0_en
     );
 
