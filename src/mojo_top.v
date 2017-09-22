@@ -40,6 +40,9 @@ module mojo_top(
   wire floppy0_en;
   wire [21:0] floppy0_setp;
   
+  wire floppy1_en;
+  wire [21:0] floppy1_setp;
+  
   avr_interface #(.CLK_RATE(50000000), .SERIAL_BAUD_RATE(500000)) avr_interface (
       .clk(clk),
       .rst(rst),
@@ -74,7 +77,9 @@ module mojo_top(
       .read_value(reg_read_value),
 		.led(led),
 	   .f0_sp(floppy0_setp),
-		.f0_en(floppy0_en)
+		.f0_en(floppy0_en),
+	   .f1_sp(floppy1_setp),
+		.f1_en(floppy1_en)
     );
 
 	floppy floppy0 (
@@ -87,12 +92,11 @@ module mojo_top(
 		.sel(drive0_sel)
 	);
 	
-	
 	floppy floppy1 (
 		.clk(clk),
-		.enable(floppy0_en),
+		.enable(floppy1_en),
 		.rst(rst),
-		.setpoint(floppy0_setp),
+		.setpoint(floppy1_setp),
 		.step(drive1_stp),
 		.dir(drive1_dir),
 		.sel(drive1_sel)
