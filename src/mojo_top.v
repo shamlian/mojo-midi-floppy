@@ -40,11 +40,6 @@ module mojo_top(
   wire floppy0_en;
   wire [21:0] floppy0_setp;
   
-  // for now, just one drive
-  assign drive1_dir = 1'bz;
-  assign drive1_stp = 1'bz;
-  assign drive1_sel = 1'bz;
-
   avr_interface #(.CLK_RATE(50000000), .SERIAL_BAUD_RATE(500000)) avr_interface (
       .clk(clk),
       .rst(rst),
@@ -90,5 +85,16 @@ module mojo_top(
 		.step(drive0_stp),
 		.dir(drive0_dir),
 		.sel(drive0_sel)
+	);
+	
+	
+	floppy floppy1 (
+		.clk(clk),
+		.enable(floppy0_en),
+		.rst(rst),
+		.setpoint(floppy0_setp),
+		.step(drive1_stp),
+		.dir(drive1_dir),
+		.sel(drive1_sel)
 	);
 endmodule
