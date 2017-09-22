@@ -41,7 +41,7 @@ end
 
 always @(posedge clk) begin
     if (rst) begin
-        floppy0_q <= 8'b0;
+        floppy0_q <= 8'b10000000;
     end else begin
         floppy0_q <= floppy0_d;
     end

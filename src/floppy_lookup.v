@@ -18,7 +18,11 @@
 // Crappy Python 2.x code to generate table:
 // clock = 50.0 * 10**6
 // for i in range(21,109):
-//     freq = 27.5 * 2**((i - 21.0)/12)
+//     note = i
+//     while (note > 69): # Things glitch out after B4; cut them off at A4
+//         note -= 12
+//     freq = 27.5 * 2**((note - 21.0)/12)
+//
 //     if (i < 0x10):
 //         print "        7'h0" + hex(i)[2:] + ":",
 //     else:
@@ -81,45 +85,46 @@ always @*
         7'h43: setpoint = 22'd63776;
         7'h44: setpoint = 22'd60197;
         7'h45: setpoint = 22'd56818; // A4
-        7'h46: setpoint = 22'd53629;
-        7'h47: setpoint = 22'd50619;
-        7'h48: setpoint = 22'd47778;
-        7'h49: setpoint = 22'd45097;
-        7'h4a: setpoint = 22'd42566;
-        7'h4b: setpoint = 22'd40177;
-        7'h4c: setpoint = 22'd37922;
-        7'h4d: setpoint = 22'd35793;
-        7'h4e: setpoint = 22'd33784;
-        7'h4f: setpoint = 22'd31888;
-        7'h50: setpoint = 22'd30098;
-        7'h51: setpoint = 22'd28409; // A5
-        7'h52: setpoint = 22'd26815;
-        7'h53: setpoint = 22'd25310;
-        7'h54: setpoint = 22'd23889;
-        7'h55: setpoint = 22'd22548;
-        7'h56: setpoint = 22'd21283;
-        7'h57: setpoint = 22'd20088;
-        7'h58: setpoint = 22'd18961;
-        7'h59: setpoint = 22'd17897;
-        7'h5a: setpoint = 22'd16892;
-        7'h5b: setpoint = 22'd15944;
-        7'h5c: setpoint = 22'd15049;
-        7'h5d: setpoint = 22'd14205; // A6
-        7'h5e: setpoint = 22'd13407;
-        7'h5f: setpoint = 22'd12655;
-        7'h60: setpoint = 22'd11945;
-        7'h61: setpoint = 22'd11274;
-        7'h62: setpoint = 22'd10641;
-        7'h63: setpoint = 22'd10044;
-        7'h64: setpoint = 22'd9480;
-        7'h65: setpoint = 22'd8948;
-        7'h66: setpoint = 22'd8446;
-        7'h67: setpoint = 22'd7972;
-        7'h68: setpoint = 22'd7525;
-        7'h69: setpoint = 22'd7102; // A7
-        7'h6a: setpoint = 22'd6704;
-        7'h6b: setpoint = 22'd6327;
-        7'h6c: setpoint = 22'd5972;
+        7'h46: setpoint = 22'd107258; // Should be B4 but is B3
+        7'h47: setpoint = 22'd101238;
+        7'h48: setpoint = 22'd95556;
+        7'h49: setpoint = 22'd90193;
+        7'h4a: setpoint = 22'd85131;
+        7'h4b: setpoint = 22'd80353;
+        7'h4c: setpoint = 22'd75843;
+        7'h4d: setpoint = 22'd71586;
+        7'h4e: setpoint = 22'd67569;
+        7'h4f: setpoint = 22'd63776;
+        7'h50: setpoint = 22'd60197;
+        7'h51: setpoint = 22'd56818;
+        7'h52: setpoint = 22'd107258;
+        7'h53: setpoint = 22'd101238;
+        7'h54: setpoint = 22'd95556;
+        7'h55: setpoint = 22'd90193;
+        7'h56: setpoint = 22'd85131;
+        7'h57: setpoint = 22'd80353;
+        7'h58: setpoint = 22'd75843;
+        7'h59: setpoint = 22'd71586;
+        7'h5a: setpoint = 22'd67569;
+        7'h5b: setpoint = 22'd63776;
+        7'h5c: setpoint = 22'd60197;
+        7'h5d: setpoint = 22'd56818;
+        7'h5e: setpoint = 22'd107258;
+        7'h5f: setpoint = 22'd101238;
+        7'h60: setpoint = 22'd95556;
+        7'h61: setpoint = 22'd90193;
+        7'h62: setpoint = 22'd85131;
+        7'h63: setpoint = 22'd80353;
+        7'h64: setpoint = 22'd75843;
+        7'h65: setpoint = 22'd71586;
+        7'h66: setpoint = 22'd67569;
+        7'h67: setpoint = 22'd63776;
+        7'h68: setpoint = 22'd60197;
+        7'h69: setpoint = 22'd56818;
+        7'h6a: setpoint = 22'd107258;
+        7'h6b: setpoint = 22'd101238;
+        7'h6c: setpoint = 22'd95556;
+
         default: setpoint = 22'h3fffff;
     endcase
 
