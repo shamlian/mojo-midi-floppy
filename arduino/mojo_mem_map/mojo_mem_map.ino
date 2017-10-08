@@ -18,6 +18,19 @@
 #include <SPI.h>
 #include "flash.h"
 #include "registers.h"
+#include <MIDI.h>
+
+MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI); // http://arduinomidilib.fortyseveneffects.com
+
+void handleNoteOn(byte channel, byte pitch, byte velocity)
+{
+    writeReg(F0_REG, 0x80 | pitch);
+}
+
+void handleNoteOff(byte channel, byte pitch, byte velocity)
+{
+    writeReg(F0_REG, 0);
+}
 
 typedef enum {
   IDLE,
@@ -57,6 +70,7 @@ volatile uint8_t convPort = 0x0F;
    be called over and over. You should try to not delay too long in the loop to
    allow the Mojo to enter loading mode when requested. */
 void userLoop() {
+  /*
   static unsigned long time = 0;
   
   if (time == 0)
@@ -67,12 +81,17 @@ void userLoop() {
   // this will allow the Mojo to stay responsive to the Mojo Loader
   
   // if 100ms have elapsed write to the LEDs
-  if (curTime > time + 100) {  
-    uint8_t leds = readReg(LED_REG) + 1;
-    writeReg(LED_REG, leds);
+  if (curTime > time + 500) {  
+    uint8_t f0 = readReg(F0_REG) + 1;
+    writeReg(F0_REG, f0);
+
+    uint8_t f1 = readReg(F1_REG) + 1;
+    writeReg(F1_REG, f1);
 
     time = curTime;
   }
+  */
+  MIDI.read();
 }
 
 /* this is used to undo any setup you did in initPostLoad */
@@ -93,7 +112,7 @@ void initPostLoad() {
 
   // These buffers are used by the demo ADC/Serial->USB code to prevent dropped samples
   RingBuffer_InitBuffer(&adcBuffer, loadBuffer, 128);
-  RingBuffer_InitBuffer(&serialBuffer, loadBuffer + 128, BUFFER_SIZE);
+  //xRingBuffer_InitBuffer(&serialBuffer, loadBuffer + 128, BUFFER_SIZE);
 
   adcPort = 0x0f; // disable the ADC by default
   ADC_BUS_DDR &= ~ADC_BUS_MASK; // make inputs
@@ -102,11 +121,11 @@ void initPostLoad() {
   // Again, the Arduino libraries didn't offer the functionality we wanted
   // so we access the serial port directly. This sets up an interrupt
   // that is used with our own buffer to capture serial input from the FPGA
-  UBRR1 = 1; // 0.5 M Baud
+  //xUBRR1 = 1; // 0.5 M Baud
 
-  UCSR1C = (1 << UCSZ11) | (1 << UCSZ10);
-  UCSR1A = (1 << U2X1);
-  UCSR1B = (1 << TXEN1) | (1 << RXEN1) | (1 << RXCIE1);
+  //xUCSR1C = (1 << UCSZ11) | (1 << UCSZ10);
+  //xUCSR1A = (1 << U2X1);
+  //xUCSR1B = (1 << TXEN1) | (1 << RXEN1) | (1 << RXCIE1);
 
   // Setup all the SPI pins
   SET(CS_FLASH, HIGH);
@@ -128,6 +147,8 @@ void initPostLoad() {
   // the FPGA looks for CCLK to be high to know the AVR is ready for data
   SET(CCLK, HIGH);
   IN(CCLK); // set as pull up so JTAG can work
+
+  MIDI.begin(MIDI_CHANNEL_OMNI);
 }
 
 /* We needed more flexibility than the Arduino libraries provide. This sets
@@ -147,6 +168,9 @@ void configADC(uint8_t preScaler, uint8_t highPower, uint8_t refSelect, uint8_t 
 }
 
 void setup() {
+    MIDI.setHandleNoteOn(handleNoteOn);
+    MIDI.setHandleNoteOff(handleNoteOff);
+  
   /* Disable clock division */
   clock_prescale_set(clock_div_1);
 
@@ -398,6 +422,7 @@ ISR(ADC_vect) { // new ADC sample, save it
   RingBuffer_Insert(&adcBuffer, (convPort << 4) | ADCH );
 }
 
+/*
 void serialRXEnable() {
   UCSR1B |= (1 << RXEN1);
 }
@@ -411,10 +436,11 @@ static inline void Serial_SendByte(const char DataByte)
   while (!(UCSR1A & (1 << UDRE1)));
   UDR1 = DataByte;
 }
-
+*/
 /* This function handles all the serial to USB work. It works
    much the same way as the ADC task, but it just forwards data
    from one port to the other instead of the ADC to the FPGA. */
+   /*
 void uartTask() {
   if (Serial) { // does the data have somewhere to go?
     uint16_t ct = RingBuffer_GetCount(&serialBuffer);
@@ -482,7 +508,7 @@ ISR(USART1_RX_vect) { // new serial data!
   }
 }
 
-
+*/
 
 
 
