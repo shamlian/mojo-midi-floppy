@@ -70,27 +70,6 @@ volatile uint8_t convPort = 0x0F;
    be called over and over. You should try to not delay too long in the loop to
    allow the Mojo to enter loading mode when requested. */
 void userLoop() {
-  /*
-  static unsigned long time = 0;
-  
-  if (time == 0)
-    time = millis();
- 
-  long curTime = millis();
-  // use millis to determin the elapsed time insted of using delay() becuase
-  // this will allow the Mojo to stay responsive to the Mojo Loader
-  
-  // if 100ms have elapsed write to the LEDs
-  if (curTime > time + 500) {  
-    uint8_t f0 = readReg(F0_REG) + 1;
-    writeReg(F0_REG, f0);
-
-    uint8_t f1 = readReg(F1_REG) + 1;
-    writeReg(F1_REG, f1);
-
-    time = curTime;
-  }
-  */
   MIDI.read();
 }
 
@@ -118,21 +97,13 @@ void initPostLoad() {
   ADC_BUS_DDR &= ~ADC_BUS_MASK; // make inputs
   ADC_BUS_PORT &= ~ADC_BUS_MASK; // no pull ups
 
-  // Again, the Arduino libraries didn't offer the functionality we wanted
-  // so we access the serial port directly. This sets up an interrupt
-  // that is used with our own buffer to capture serial input from the FPGA
-  //xUBRR1 = 1; // 0.5 M Baud
-
-  //xUCSR1C = (1 << UCSZ11) | (1 << UCSZ10);
-  //xUCSR1A = (1 << U2X1);
-  //xUCSR1B = (1 << TXEN1) | (1 << RXEN1) | (1 << RXCIE1);
-
   // Setup all the SPI pins
   SET(CS_FLASH, HIGH);
   OUT(SS);
   SET(SS, HIGH);
   SPI_Setup(); // enable the SPI Port
 
+  // Enable serial port pins (from Mojo code)
   DDRD |= (1 << 3);
   DDRD &= ~(1 << 2);
   PORTD |= (1 << 2);
@@ -148,7 +119,7 @@ void initPostLoad() {
   SET(CCLK, HIGH);
   IN(CCLK); // set as pull up so JTAG can work
 
-  MIDI.begin(MIDI_CHANNEL_OMNI);
+  MIDI.begin(MIDI_CHANNEL_OMNI); // listen to MIDI on all channels, for now
 }
 
 /* We needed more flexibility than the Arduino libraries provide. This sets
@@ -421,96 +392,6 @@ ISR(ADC_vect) { // new ADC sample, save it
   RingBuffer_Insert(&adcBuffer, ADCL );
   RingBuffer_Insert(&adcBuffer, (convPort << 4) | ADCH );
 }
-
-/*
-void serialRXEnable() {
-  UCSR1B |= (1 << RXEN1);
-}
-
-void serialRXDisable() {
-  UCSR1B &= ~(1 << RXEN1);
-}
-
-static inline void Serial_SendByte(const char DataByte)
-{
-  while (!(UCSR1A & (1 << UDRE1)));
-  UDR1 = DataByte;
-}
-*/
-/* This function handles all the serial to USB work. It works
-   much the same way as the ADC task, but it just forwards data
-   from one port to the other instead of the ADC to the FPGA. */
-   /*
-void uartTask() {
-  if (Serial) { // does the data have somewhere to go?
-    uint16_t ct = RingBuffer_GetCount(&serialBuffer);
-    if (ct > 0) { // is there data to send?
-      if (serialBuffer.Out + ct <= serialBuffer.End) { // does it loop in our buffer?
-        ct = Serial.write(serialBuffer.Out, ct); // dump all the date
-        serialBuffer.Out += ct;
-        if (serialBuffer.Out == serialBuffer.End)
-          serialBuffer.Out = serialBuffer.Start; // loop the buffer
-      }
-      else { // it looped the ring buffer
-        uint8_t* loopend = serialBuffer.Out + ct;
-        uint16_t ct2 = loopend - serialBuffer.End;
-        uint16_t ct1 = ct - ct2;
-        uint16_t ct1s = Serial.write(serialBuffer.Out, ct1); // dump first block
-        if (ct1s == ct1) {
-          ct2 = Serial.write(serialBuffer.Start, ct2); // dump second block
-          serialBuffer.Out = serialBuffer.Start + ct2; // update the pointers
-          ct = ct1 + ct2;
-        }
-        else {
-          ct = ct1s;
-          serialBuffer.Out += ct;
-        }
-      }
-
-      uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
-      GlobalInterruptDisable();
-
-      serialBuffer.Count -= ct; // update the count
-
-      SetGlobalInterruptMask(CurrentGlobalInt);
-
-      int count = RingBuffer_GetCount(&serialBuffer);
-
-      //if (count == 0)
-      //  Serial.flush();
-
-      if (count < SERIAL_STOP) {
-        serialRXEnable();
-        TOGGLE(TX_BUSY); // re-enable the serial port
-      }
-    }
-
-    int16_t w;
-    while ((w = Serial.read()) >= 0) {
-      Serial_SendByte(w);
-    }
-  }
-}
-
-ISR(USART1_RX_vect) { // new serial data!
-  *(serialBuffer.In) = UDR1;
-
-  if (++serialBuffer.In == serialBuffer.End)
-    serialBuffer.In = serialBuffer.Start;
-
-  serialBuffer.Count++;
-
-  if (serialBuffer.Count >= SERIAL_STOP) { // are we almost out of space?
-    if (serialBuffer.Count > SERIAL_CUT)
-      serialRXDisable(); // if our flag is ignored disable the serial port so it doesn't clog things up
-  } else {
-    TOGGLE(TX_BUSY);
-  }
-}
-
-*/
-
-
 
 
 
