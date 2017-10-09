@@ -14,6 +14,18 @@ module mojo_top(
     output drive1_dir,
     output drive1_stp,
     output drive1_sel,
+    output drive2_dir,
+    output drive2_stp,
+    output drive2_sel,
+    output drive3_dir,
+    output drive3_stp,
+    output drive3_sel,
+    output drive4_dir,
+    output drive4_stp,
+    output drive4_sel,
+    output drive5_dir,
+    output drive5_stp,
+    output drive5_sel,
     // AVR SPI connections
     output spi_miso,
     input spi_ss,
@@ -45,6 +57,18 @@ module mojo_top(
   
   wire floppy1_en;
   wire [21:0] floppy1_setp;
+    
+  wire floppy2_en;
+  wire [21:0] floppy2_setp;
+    
+  wire floppy3_en;
+  wire [21:0] floppy3_setp;
+  
+  wire floppy4_en;
+  wire [21:0] floppy4_setp;
+  
+  wire floppy5_en;
+  wire [21:0] floppy5_setp;
   
   avr_interface #(.CLK_RATE(50000000), .SERIAL_BAUD_RATE(500000)) avr_interface (
       .clk(clk),
@@ -82,7 +106,15 @@ module mojo_top(
 	   .f0_sp(floppy0_setp),
 		.f0_en(floppy0_en),
 	   .f1_sp(floppy1_setp),
-		.f1_en(floppy1_en)
+		.f1_en(floppy1_en),
+	   .f2_sp(floppy2_setp),
+		.f2_en(floppy2_en),
+	   .f3_sp(floppy3_setp),
+		.f3_en(floppy3_en),
+	   .f4_sp(floppy4_setp),
+		.f4_en(floppy4_en),
+	   .f5_sp(floppy5_setp),
+		.f5_en(floppy5_en)
     );
 
 	floppy floppy0 (
@@ -104,4 +136,45 @@ module mojo_top(
 		.dir(drive1_dir),
 		.sel(drive1_sel)
 	);
+		
+	floppy floppy2 (
+		.clk(clk),
+		.enable(floppy2_en),
+		.rst(rst),
+		.setpoint(floppy2_setp),
+		.step(drive2_stp),
+		.dir(drive2_dir),
+		.sel(drive2_sel)
+	);
+	
+	floppy floppy3 (
+		.clk(clk),
+		.enable(floppy3_en),
+		.rst(rst),
+		.setpoint(floppy3_setp),
+		.step(drive3_stp),
+		.dir(drive3_dir),
+		.sel(drive3_sel)
+	);
+		
+	floppy floppy4 (
+		.clk(clk),
+		.enable(floppy4_en),
+		.rst(rst),
+		.setpoint(floppy4_setp),
+		.step(drive4_stp),
+		.dir(drive4_dir),
+		.sel(drive4_sel)
+	);
+		
+	floppy floppy5 (
+		.clk(clk),
+		.enable(floppy5_en),
+		.rst(rst),
+		.setpoint(floppy5_setp),
+		.step(drive5_stp),
+		.dir(drive5_dir),
+		.sel(drive5_sel)
+	);
+	
 endmodule

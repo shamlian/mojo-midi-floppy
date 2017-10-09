@@ -20,11 +20,11 @@
 #include "registers.h"
 #include <MIDI.h>
 
-#define NUM_FLOPPIES 2
+#define NUM_FLOPPIES 6
 
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI); // http://arduinomidilib.fortyseveneffects.com
 
-uint8_t floppy_alloc[2] = {0};
+uint8_t floppy_alloc[NUM_FLOPPIES] = {0};
 
 void handleNoteOn(byte channel, byte pitch, byte velocity)
 {
