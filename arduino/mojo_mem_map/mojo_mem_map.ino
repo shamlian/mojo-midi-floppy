@@ -20,16 +20,40 @@
 #include "registers.h"
 #include <MIDI.h>
 
+#define NUM_FLOPPIES 2
+
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI); // http://arduinomidilib.fortyseveneffects.com
+
+uint8_t floppy_alloc[2] = {0};
 
 void handleNoteOn(byte channel, byte pitch, byte velocity)
 {
-    writeReg(F0_REG, 0x80 | pitch);
+  static uint8_t i;
+
+  for (i = 0; i < NUM_FLOPPIES; i++)
+  {
+    if (floppy_alloc[i] == 0)
+    {
+      floppy_alloc[i] = pitch;
+      writeReg(F0_REG+i, 0x80 | pitch);
+      break;
+    }
+  }
 }
 
 void handleNoteOff(byte channel, byte pitch, byte velocity)
 {
-    writeReg(F0_REG, 0);
+  static uint8_t i;
+
+  for (i = 0; i < NUM_FLOPPIES; i++)
+  {
+    if (floppy_alloc[i] == pitch)
+    {
+      floppy_alloc[i] = 0;
+      writeReg(F0_REG+i, 0);
+      break;
+    }
+  }
 }
 
 typedef enum {
