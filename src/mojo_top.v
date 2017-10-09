@@ -23,9 +23,12 @@ module mojo_top(
     output [3:0] avr_flags,
     // Serial connections
     input avr_tx, // AVR Tx => FPGA Rx
-    output avr_rx, // AVR Rx => FPGA Tx
-    input avr_rx_busy // AVR Rx buffer full
+    output avr_rx, // old AVR Rx => FPGA Tx now disconnected
+    input avr_rx_busy, // AVR Rx buffer full
+	 input midi_in // new AVR Rx => MIDI in
   );
+
+  assign avr_rx = midi_in;
 
   wire rst = ~rst_n; // make reset active high
 
@@ -52,7 +55,7 @@ module mojo_top(
       .spi_mosi(spi_mosi),
       .spi_sck(spi_sck),
       .spi_ss(spi_ss),
-      .tx(avr_rx),
+      .tx(/*avr_rx*/),
       .rx(avr_tx),
       .rx_data(),
       .new_rx_data(),
