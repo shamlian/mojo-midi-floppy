@@ -38,18 +38,18 @@ module floppy(
 	
 	assign sel = ~enable;
 	
-	wire int_clk = clk & enable;
-	
-	always @(posedge int_clk, posedge rst) begin
+	always @(posedge clk, posedge rst) begin
 		if (rst) begin
 			counter_q <= 22'd0;
 			step <= 1;
 		end else begin
-		   if (counter_d >= setpoint) begin
-				counter_q <= 22'd0;
-				step <= ~step;
-			end else begin
-				counter_q <= counter_d;
+			if (enable) begin
+				if (counter_d >= setpoint) begin
+					counter_q <= 22'd0;
+					step <= ~step;
+				end else begin
+					counter_q <= counter_d;
+				end
 			end
 		end
 	end
@@ -63,11 +63,13 @@ module floppy(
 			dir_ctr_q <= 7'd0;
 			dir <= 1;
 		end else begin
-			if (dir_ctr_d == 7'd80) begin
-				dir_ctr_q <= 7'd0;
-				dir <= ~dir;
-			end else begin
-				dir_ctr_q <= dir_ctr_d;
+		   if (enable) begin
+				if (dir_ctr_d == 7'd80) begin
+					dir_ctr_q <= 7'd0;
+					dir <= ~dir;
+				end else begin
+					dir_ctr_q <= dir_ctr_d;
+				end
 			end
 		end
 	end

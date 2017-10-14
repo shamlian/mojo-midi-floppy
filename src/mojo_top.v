@@ -82,7 +82,7 @@ module mojo_top(
   wire floppy7_en;
   wire [21:0] floppy7_setp;
   
-  avr_interface #(.CLK_RATE(50000000), .SERIAL_BAUD_RATE(500000)) avr_interface (
+  avr_interface #(.CLK_RATE(50000000)) avr_interface (
       .clk(clk),
       .rst(rst),
       .cclk(cclk),
@@ -91,14 +91,6 @@ module mojo_top(
       .spi_mosi(spi_mosi),
       .spi_sck(spi_sck),
       .spi_ss(spi_ss),
-      .tx(/*avr_rx*/),
-      .rx(avr_tx),
-      .rx_data(),
-      .new_rx_data(),
-      .tx_data(8'h00),
-      .new_tx_data(1'b0),
-      .tx_busy(),
-      .tx_block(avr_rx_busy),
       .reg_addr(reg_addr),
       .write(reg_write),
       .new_req(reg_new_req),

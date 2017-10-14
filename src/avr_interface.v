@@ -1,6 +1,5 @@
 module avr_interface #(
-    parameter CLK_RATE = 50000000,
-    parameter SERIAL_BAUD_RATE = 500000
+    parameter CLK_RATE = 50000000
     )(
     input clk,
     input rst,
@@ -18,18 +17,6 @@ module avr_interface #(
     input spi_mosi,
     input spi_sck,
     input spi_ss,
-
-    // AVR Serial Signals
-    output tx,
-    input rx,
-
-    // Serial Interface
-    output [7:0] rx_data,
-    output new_rx_data,
-    input [7:0] tx_data,
-    input new_tx_data,
-    output tx_busy,
-    input tx_block,
 
     // Register interface signals
     output [5:0] reg_addr,
@@ -67,9 +54,8 @@ assign write = write_q;
 assign new_req = new_req_q;
 assign write_value = write_value_q;
 
-// these signals connect to the AVR and should be Z when the AVR isn't ready
+// this signal connects to the AVR and should be Z when the AVR isn't ready
 assign spi_miso = ready && !spi_ss ? spi_miso_m : 1'bZ;
-assign tx = ready ? tx_m : 1'bZ;
 
 // cclk_detector is used to detect when cclk is high signaling when
 // the AVR is ready
@@ -93,29 +79,6 @@ spi_slave spi_slave (
     .frame_start(frame_start),
     .frame_end(frame_end)
 );
-
-// CLK_PER_BIT is the number of cycles each 'bit' lasts for
-// rtoi converts a 'real' number to an 'integer'
-parameter CLK_PER_BIT = $rtoi($ceil(CLK_RATE/SERIAL_BAUD_RATE));
-
-serial_rx #(.CLK_PER_BIT(CLK_PER_BIT)) serial_rx (
-    .clk(clk),
-    .rst(n_rdy),
-    .rx(rx),
-    .data(rx_data),
-    .new_data(new_rx_data)
-);
-
-serial_tx #(.CLK_PER_BIT(CLK_PER_BIT)) serial_tx (
-    .clk(clk),
-    .rst(n_rdy),
-    .tx(tx_m),
-    .block(tx_block),
-    .busy(tx_busy),
-    .data(tx_data),
-    .new_data(new_tx_data)
-);
-
 
 always @(*) begin
     write_value_d = write_value_q;
