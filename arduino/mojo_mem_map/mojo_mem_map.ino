@@ -20,7 +20,7 @@
 #include "registers.h"
 #include <MIDI.h>
 
-#define NUM_FLOPPIES 6
+#define NUM_FLOPPIES 8
 
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI); // http://arduinomidilib.fortyseveneffects.com
 
@@ -113,9 +113,8 @@ void disablePostLoad() {
 void initPostLoad() {
   //Serial.flush();
 
-  // These buffers are used by the demo ADC/Serial->USB code to prevent dropped samples
+  // This buffer is used by the demo ADC->USB code to prevent dropped samples
   RingBuffer_InitBuffer(&adcBuffer, loadBuffer, 128);
-  //xRingBuffer_InitBuffer(&serialBuffer, loadBuffer + 128, BUFFER_SIZE);
 
   adcPort = 0x0f; // disable the ADC by default
   ADC_BUS_DDR &= ~ADC_BUS_MASK; // make inputs

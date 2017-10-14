@@ -22,7 +22,11 @@ module reg_ctrl (
         output [21:0] f4_sp,
         output f4_en,
         output [21:0] f5_sp,
-        output f5_en
+        output f5_en,
+        output [21:0] f6_sp,
+        output f6_en,
+        output [21:0] f7_sp,
+        output f7_en
     );
 
 reg [7:0] read_value_d, read_value_q;
@@ -33,9 +37,11 @@ reg [7:0] floppy2_d, floppy2_q;
 reg [7:0] floppy3_d, floppy3_q;
 reg [7:0] floppy4_d, floppy4_q;
 reg [7:0] floppy5_d, floppy5_q;
+reg [7:0] floppy6_d, floppy6_q;
+reg [7:0] floppy7_d, floppy7_q;
 
 assign read_value = read_value_q;
-assign led = {2'h0,floppy5_q[7],floppy4_q[7],floppy3_q[7],floppy2_q[7],floppy1_q[7],floppy0_q[7]};
+assign led = {floppy7_q[7],floppy6_q[7],floppy5_q[7],floppy4_q[7],floppy3_q[7],floppy2_q[7],floppy1_q[7],floppy0_q[7]};
 
 always @* begin
     read_value_d = read_value_q;
@@ -46,6 +52,8 @@ always @* begin
     floppy3_d = floppy3_q;
     floppy4_d = floppy4_q;
     floppy5_d = floppy5_q;
+    floppy6_d = floppy6_q;
+    floppy7_d = floppy7_q;
 
     if (new_req) begin
         if (write)
@@ -56,6 +64,8 @@ always @* begin
                 6'h03: floppy3_d = write_value;
                 6'h04: floppy4_d = write_value;
                 6'h05: floppy5_d = write_value;
+                6'h06: floppy6_d = write_value;
+                6'h07: floppy7_d = write_value;
             endcase
         else //read
             case (reg_addr)
@@ -65,6 +75,8 @@ always @* begin
                 6'h03: read_value_d = floppy3_q;
                 6'h04: read_value_d = floppy4_q;
                 6'h05: read_value_d = floppy5_q;
+                6'h06: read_value_d = floppy6_q;
+                6'h07: read_value_d = floppy7_q;
             endcase
     end
 end
@@ -77,6 +89,8 @@ always @(posedge clk) begin
         floppy3_q <= 8'b00000000;
         floppy4_q <= 8'b00000000;
         floppy5_q <= 8'b00000000;
+        floppy6_q <= 8'b00000000;
+        floppy7_q <= 8'b00000000;
     end else begin
         floppy0_q <= floppy0_d;
         floppy1_q <= floppy1_d;
@@ -84,6 +98,8 @@ always @(posedge clk) begin
         floppy3_q <= floppy3_d;
         floppy4_q <= floppy4_d;
         floppy5_q <= floppy5_d;
+        floppy6_q <= floppy6_d;
+        floppy7_q <= floppy7_d;
     end
     
     read_value_q <= read_value_d;
@@ -124,5 +140,17 @@ floppy_lookup floppy_lookup5(
     .setpoint(f5_sp)
 );
 assign f5_en = floppy5_q[7];
+
+floppy_lookup floppy_lookup6(
+    .note(floppy6_q[6:0]),
+    .setpoint(f6_sp)
+);
+assign f6_en = floppy6_q[7];
+
+floppy_lookup floppy_lookup7(
+    .note(floppy7_q[6:0]),
+    .setpoint(f7_sp)
+);
+assign f7_en = floppy7_q[7];
 
 endmodule

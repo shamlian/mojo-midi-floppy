@@ -26,6 +26,12 @@ module mojo_top(
     output drive5_dir,
     output drive5_stp,
     output drive5_sel,
+    output drive6_dir,
+    output drive6_stp,
+    output drive6_sel,
+    output drive7_dir,
+    output drive7_stp,
+    output drive7_sel,
     // AVR SPI connections
     output spi_miso,
     input spi_ss,
@@ -69,6 +75,12 @@ module mojo_top(
   
   wire floppy5_en;
   wire [21:0] floppy5_setp;
+  
+  wire floppy6_en;
+  wire [21:0] floppy6_setp;
+  
+  wire floppy7_en;
+  wire [21:0] floppy7_setp;
   
   avr_interface #(.CLK_RATE(50000000), .SERIAL_BAUD_RATE(500000)) avr_interface (
       .clk(clk),
@@ -114,7 +126,11 @@ module mojo_top(
 	   .f4_sp(floppy4_setp),
 		.f4_en(floppy4_en),
 	   .f5_sp(floppy5_setp),
-		.f5_en(floppy5_en)
+		.f5_en(floppy5_en),
+	   .f6_sp(floppy6_setp),
+		.f6_en(floppy6_en),
+	   .f7_sp(floppy7_setp),
+		.f7_en(floppy7_en)
     );
 
 	floppy floppy0 (
@@ -175,6 +191,26 @@ module mojo_top(
 		.step(drive5_stp),
 		.dir(drive5_dir),
 		.sel(drive5_sel)
+	);
+	
+	floppy floppy6 (
+		.clk(clk),
+		.enable(floppy6_en),
+		.rst(rst),
+		.setpoint(floppy6_setp),
+		.step(drive6_stp),
+		.dir(drive6_dir),
+		.sel(drive6_sel)
+	);
+	
+	floppy floppy7 (
+		.clk(clk),
+		.enable(floppy7_en),
+		.rst(rst),
+		.setpoint(floppy7_setp),
+		.step(drive7_stp),
+		.dir(drive7_dir),
+		.sel(drive7_sel)
 	);
 	
 endmodule
