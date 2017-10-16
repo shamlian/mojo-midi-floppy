@@ -30,6 +30,11 @@ void handleNoteOn(byte channel, byte pitch, byte velocity)
 {
   static uint8_t i;
 
+  if (channel == 10)
+  {
+    return;
+  }
+  
   for (i = 0; i < NUM_FLOPPIES; i++)
   {
     if (floppy_alloc[i] == 0)
@@ -44,6 +49,11 @@ void handleNoteOn(byte channel, byte pitch, byte velocity)
 void handleNoteOff(byte channel, byte pitch, byte velocity)
 {
   static uint8_t i;
+
+  if (channel == 10)
+  {
+    return;
+  }
 
   for (i = 0; i < NUM_FLOPPIES; i++)
   {
